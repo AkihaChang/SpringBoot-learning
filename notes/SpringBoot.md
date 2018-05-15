@@ -57,7 +57,13 @@
 
 ### 2、Idea设置
 
-![idea maven settings](E:\GitHub-Repositories\SpringBoot-learning\notes\images\idea maven settings)
+```
+File | Settings | Build, Execution, Deployment | Build Tools | Maven
+Maven home directory、User Settings file、Local repository
+分别进行个性化配置
+```
+
+
 
 ### 4、Spring Boot HelloWorld
 
