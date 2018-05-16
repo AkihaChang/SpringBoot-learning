@@ -199,3 +199,92 @@ public class HelloWorldMainApplication {
 ```
 
 **@SpringBootApplication**：Spring Boot应用标注在某个类上，说明这个类是Spring Boot的主配置类，Spring Boot就应该运行这个类的main方法来启动Spring Boot应用。
+
+
+
+```java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(
+    excludeFilters = {@Filter(
+    type = FilterType.CUSTOM,
+    classes = {TypeExcludeFilter.class}
+), @Filter(
+    type = FilterType.CUSTOM,
+    classes = {AutoConfigurationExcludeFilter.class}
+)}
+)
+public @interface EnableAutoConfiguration {
+```
+
+**@SpringBootApplication**：Spring Boot配置类
+
+​	标注在某一个类上，表示这是一个Spring Boot的配置类；
+
+​	**@Configuration**：配置类上来标注这个注解；
+
+​		配置类 ------ 配置文件；配置类也是容器中的一个组件；**@Component**
+
+**@EnableAutoConfiguration**：开启自动配置功能；
+
+​	以前需要配置的东西，Spring Boot帮助我们自动配置；**@EnableAutoConfiguration**gaosuSpring Boot开启自动配置功能；这样自动配置才能生效；
+
+```java
+@AutoConfigurationPackage
+@Import({AutoConfigurationImportSelector.class})
+public @interface EnableAutoConfiguration {
+```
+
+​	**@AutoConfigurationPackage**：自动配置包
+
+​		@Import({Registrar.class})：
+
+​		Spring的底层注解@Import，给容器中导入一个组件；导入的组件由Registrar.class
+
+​		**将主配置类（@SpringBootApplication标注的类）的所在包下面所有子包里面的所有组件扫描到Spring容器；**
+
+​	**@Import(AutoConfigurationImportSelector.class)**；
+
+​	给容器导入组件？
+
+​	AutoConfigurationImportSelector：导入哪些组件的选择器；
+
+​	将所有需要导入的组件以全类名的方式返回；这些组件就会被添加到容器中；
+
+​	会给容器中导入非常多的自动配置类（xxxAutoConfiguration）；就是给容器中导入这个场景需要的所有组件，并配置好这些组件；
+
+debug输出内容：
+
+```java
+configurations = {LinkedList@3008}  size = 109
+ 0 = "org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration"
+ 1 = "org.springframework.boot.autoconfigure.aop.AopAutoConfiguration"
+ 2 = "org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration"
+ 3 = "org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration"
+ 4 = "org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration"
+ 5 = "org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration"
+ 6 = "org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration"
+ 7 = "org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration"
+ 8 = "org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration"
+ 9 = "org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration"
+ 10 = "org.springframework.boot.autoconfigure.couchbase.CouchbaseAutoConfiguration"
+```
+
+有了自动配置类，免去我们手动编写配置注入功能组件等的工作；
+
+```java
+SpringFactoriesLoader.loadFactoryNames(EnableAutoConfiguration.class, classLoader)
+```
+
+Spring Boot在启动的时候从类路径下的**META-INF/spring.factories**中获取**EnableAutoConfiguration**指定的值，将这些值作为自动配置类导入到容器中，自动配置类就生效，帮我们进行自动配置工作；以前我们需要自己做的配置，自动配置类帮我们做了。
+
+J2EE的整体整合和解决方案都在"spring-boot-autoconfigure-2.0.2.RELEASE.jar"；
+
+
+
+
+
