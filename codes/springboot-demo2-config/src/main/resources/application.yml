@@ -1,0 +1,15 @@
+#server:
+#  port: 8081
+#
+#person:
+#    name: Tom
+#    age: 24
+#    birthday: 1995/1/1
+#    isMarried: false
+#    personMap: {k1: value1,k2: value2}
+#    personList:
+#     - AAA
+#     - BBB
+#    pet:
+#        name: 阿黄
+#        age: 10
