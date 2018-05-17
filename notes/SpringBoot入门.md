@@ -8,6 +8,8 @@
 >
 > J2EE开发的一站式解决方案；
 
+
+
 ##2、微服务
 
 2014，martin fowler提出
@@ -23,6 +25,8 @@
 
 
 详细参照微服务文档：http://blog.cuicc.com/blog/2015/07/22/microservices
+
+
 
 ##3、环境配置
 
@@ -63,7 +67,9 @@ Maven home directory、User Settings file、Local repository
 分别进行个性化配置
 ```
 
-### ##4、Spring Boot HelloWorld
+
+
+### 4、Spring Boot HelloWorld
 
 功能：浏览器发送hello请求，服务器接受请求并处理，相应Hello World字符串
 
@@ -136,6 +142,8 @@ http://localhost:8080/hello
 ```
 
 将这个应用打成jar包，直接运用`java -jar` 的命令运行。
+
+
 
 ##5、Hello World研究
 
@@ -286,5 +294,16 @@ J2EE的整体整合和解决方案都在"spring-boot-autoconfigure-2.0.2.RELEASE
 
 
 
+##6、使用Spring Initializer快速创建Spring Boot项目
 
+IDE都支持使用Spring的项目创建向导快速创建一个Spring Boot项目；
 
+选择我们需要的模块；向导会联网创建Spring Boot项目；
+
+默认生成的Spring Boot项目；
+
+* 主程序已经生成好了，我们只需要编写自己的逻辑
+* resources文件夹中目录结构：
+  * static：保存所有的静态资源；如：js css images;
+  * templates：保存所有的模板页面；（Spring Boot默认jar包嵌入式的Tomcat，默认不支持jsp页面）可以使用模板引擎（freemarker、thymeleaf）
+  * application.properties：Spring Boot应用的配置文件；可以修改一些默认配置
