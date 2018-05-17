@@ -99,7 +99,7 @@ ships: [Richelieu,Missouri,Enterprise]
 
 ## 3、配置文件注入
 
-配置文件：
+配置文件（yaml）：
 
 ```yaml
 person:
@@ -223,9 +223,21 @@ public class Person {
 </dependency>
 ```
 
+另外：配置文件（.properties）：
 
-
-​	
+>\#配置person的值
+>
+>\#idea的proeperties配置文件使用utf-8编码。此时解决乱码方法：在file->setting->editor->file encodings下，把transparent native-to-ascll conversion勾选上就行了
+>
+>person.name=Tom
+>person.age= 20
+>person.birthday=1995/1/1
+>person.isMarried=false
+>person.person-map.k1=value1
+>person.person-map.k2=value2
+>person.person-list=AA,BBB,CCCC
+>person.pet.name=阿黄
+>person.pet.age=10
 
 
 
