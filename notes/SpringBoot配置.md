@@ -70,8 +70,8 @@ server:
 
 ```yaml
 ship: 
-	name: Missouri
-	class: Battleship
+ name: Missouri
+ class: Battleship
 ```
 
 行内写法：
