@@ -385,7 +385,7 @@ public class MyAppConfig {
 }
 ```
 
-### 5、配置文件占位符
+##4、配置文件占位符
 
 ####1、随机数
 
@@ -408,3 +408,28 @@ person.pet.name=${person.hello:hello}阿黄
 person.pet.age=10
 ```
 
+## 5、Profile
+
+### 1、多Profile文件
+
+我们在主配置文件编写的时候，文件名可以使是 application-{profile}.properties/yml
+
+默认使用applicatio.properties的配置；
+
+### 2、yml支持多文档块方式
+
+
+
+### 3、激活指定profile
+
+​	1、在配置文件中指定 **spring.profiles.active=dev**
+
+​	2、命令行：
+
+​		项目打包后，cmd输入：**java -jar springboot-demo2-config --spring.profiles.active=dev**
+
+同样可以在测试的时候，配置传入的命令行参数（Run-->Edit Configuration-->Program arguments:--spring.profiles.active=prod）
+
+​	3、虚拟机参数：
+
+​		Run-->Edit Configuration-->Program arguments:-Dspring.profiles.active=dev
