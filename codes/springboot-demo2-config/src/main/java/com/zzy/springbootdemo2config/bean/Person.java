@@ -1,8 +1,12 @@
 package com.zzy.springbootdemo2config.bean;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Email;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +17,33 @@ import java.util.Map;
  * prefix = "person"：将配置文件中哪个下面的所有属性进行一一映射
  *
  * 只有这个组件时容器中的组件，才能使用容器提供的@ConfigurationProperties功能
- *
+ * @ConfigurationProperties：默认从全局配置文件中获取值
  */
+@PropertySource(value = {"classpath:person.properties"})
 @Component
 @ConfigurationProperties(prefix = "person")
+@Validated
 public class Person {
+
+    /**
+     * <bean class="Person">
+     *     <property name="name" value="字面量/${key}从环境变量、配置文件中获取值/#{SpEL}"
+     * </bean>
+     *
+     */
+
+
+    //邮箱格式
+    //@Email
+    //@Value("$person.name")
     private String name;
+    //@Value("#{11*2}")
     private int age;
     private Date birthday;
+    //@Value("true")
     private boolean isMarried;
 
+    //@Value("${person.maps}")
     private Map<String,Object> personMap;
     private List<Object> personList;
     private Pet pet;

@@ -99,6 +99,8 @@ ships: [Richelieu,Missouri,Enterprise]
 
 ## 3、配置文件注入
 
+###1、使用yaml（yml）注入的方法
+
 配置文件（yaml）：
 
 ```yaml
@@ -223,6 +225,8 @@ public class Person {
 </dependency>
 ```
 
+###2、使用properties的注入方法
+
 另外：配置文件（.properties）：
 
 >\#配置person的值
@@ -239,5 +243,168 @@ public class Person {
 >person.pet.name=阿黄
 >person.pet.age=10
 
+### 3、@Value获取值和@ConfigurationProperties获取值的比较
 
+|                           | @ConfigurationProperties | @Value     |
+| ------------------------- | ------------------------ | ---------- |
+| 功能                      | 批量注入配置文件中的属性 | 一个个指定 |
+| 松散绑定（松散语法）      | 支持                     | 不支持     |
+| SpEL9（Spring表达式语言） | 不支持                   | 支持       |
+| JSR303数据校验            | 支持                     | 不支持     |
+| 复杂类型封装              | 支持                     | 不支持     |
+
+配置文件不管是yaml还是properties他们都能获取到值；
+
+如果说，我们只是在某个业务逻辑中需要获取某项值，使用@Value
+
+如果说，我们专门编写了一个javaBean来和配置文件映射，我们就直接使用@ConfigurationProperties
+
+4、配置文件注入值数据校验
+
+```java
+/**
+ * 将配置文件中的每一个属性的值，映射到这个组件中
+ * @ConfigurationProperties：告诉Spring Boot将本类中的所有属性和配置文件中的相关属性进行绑定
+ * prefix = "person"：将配置文件中哪个下面的所有属性进行一一映射
+ *
+ * 只有这个组件时容器中的组件，才能使用容器提供的@ConfigurationProperties功能
+ *
+ */
+@Component
+@ConfigurationProperties(prefix = "person")
+@Validated
+public class Person {
+
+    /**
+     * <bean class="Person">
+     *     <property name="name" value="字面量/${key}从环境变量、配置文件中获取值/#{SpEL}"
+     * </bean>
+     *
+     */
+
+
+    //邮箱格式
+    //@Email
+    //@Value("$person.name")
+    private String name;
+    //@Value("#{11*2}")
+    private int age;
+    private Date birthday;
+    //@Value("true")
+    private boolean isMarried;
+
+    //@Value("${person.maps}")
+    private Map<String,Object> personMap;
+    private List<Object> personList;
+    private Pet pet;
+
+```
+
+### 4、@PropertySource&@ImportResource
+
+**@PropertySource**：加载指定的配置文件；
+
+```java
+/**
+ * 将配置文件中的每一个属性的值，映射到这个组件中
+ * @ConfigurationProperties：告诉Spring Boot将本类中的所有属性和配置文件中的相关属性进行绑定
+ * prefix = "person"：将配置文件中哪个下面的所有属性进行一一映射
+ *
+ * 只有这个组件时容器中的组件，才能使用容器提供的@ConfigurationProperties功能
+ * @ConfigurationProperties：默认从全局配置文件中获取值
+ */
+@PropertySource(value = {"classpath:person.properties"})
+@Component
+@ConfigurationProperties(prefix = "person")
+@Validated
+public class Person {
+
+    /**
+     * <bean class="Person">
+     *     <property name="name" value="字面量/${key}从环境变量、配置文件中获取值/#{SpEL}"
+     * </bean>
+     *
+     */
+
+
+    //邮箱格式
+    //@Email
+    //@Value("$person.name")
+    private String name;
+    //@Value("#{11*2}")
+    private int age;
+    private Date birthday;
+    //@Value("true")
+    private boolean isMarried;
+```
+
+**@ImportResource**：导入Spring的配置文件，让配置文件里面的内容生效；
+
+Spring Boot里面没有Spring的配置文件，我恩自己编写的配置文件，也不能自动识别；
+
+想让Spring的配置文件生效，加载进来；@ImportResource标注在一个配置类上
+
+```java
+@ImportResource("classpath:beans.xml")
+//导入配置文件让其生效
+```
+
+不来编写Spring的配置文件：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="helloService" class="com.zzy.springbootdemo2config.service.HelloService"></bean>
+</beans>
+```
+
+Spring Boot推荐给容器中添加组建的方式：推荐使用全注解的方式
+
+1、配置类======Spring配置文件
+
+2、使用@Bean给容易中添加组件
+
+```java
+/**
+ * @Configuration：指明当前类是一个配置类；就是来替代之前的Spring配置文件
+ *
+ * 在配置文件中，使用"<bean></bean>"标签添加组件
+ */
+@Configuration
+public class MyAppConfig {
+
+    //将方法的返回值添加到容器中；容器中这个组件的默认id就是方法名
+    @Bean
+    public HelloService helloService(){
+        System.out.println("配置类@Bean给容器中添加组件了！");
+        return new HelloService();
+    }
+}
+```
+
+### 5、配置文件占位符
+
+####1、随机数
+
+```java
+random.value、{random.Int}、${randon.long}
+random.int(10)、{random.int[123456]}
+```
+
+#### 2、占位符获取之前的值，如果没有，可以使用:指定默认的值
+
+```prop
+person.name=Tom${random.uuid}
+person.age= ${random.int}
+person.birthday=1995/1/1
+person.isMarried=false
+person.person-map.k1=value1
+person.person-map.k2=value2
+person.person-list=AA,BBB,CCCC
+person.pet.name=${person.hello:hello}阿黄
+person.pet.age=10
+```
 
