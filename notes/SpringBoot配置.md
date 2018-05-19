@@ -518,4 +518,4 @@ java -jar springboot-demo2-config2-0.0.1-SNAPSHOT.jar --server.port=8087 --serve
 
 11、通过SpringApplication.setDefaultProperties指定的默认属性
 
-以上列举比较常用的配置方法，所有支持的及配置加载来源请参考官方文档。
+以上列举比较常用的配置方法，所有支持的及配置加载来源请参考[官方文档](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-external-config)。
