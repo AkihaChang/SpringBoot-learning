@@ -9,6 +9,8 @@ Spring Boot使用一个全局配置文件,配置文件名是固定的
 
 配置文件的作用：修改Spring Boot自动配置的默认值；Spring Boot在底层给我们配置好了；
 
+
+
 ##2、YAML语法
 
 **YAML**（YAML A Markup Language）
@@ -96,6 +98,8 @@ ships:
 ```yaml
 ships: [Richelieu,Missouri,Enterprise]
 ```
+
+
 
 ## 3、配置文件注入
 
@@ -385,6 +389,8 @@ public class MyAppConfig {
 }
 ```
 
+
+
 ##4、配置文件占位符
 
 ####1、随机数
@@ -408,17 +414,36 @@ person.pet.name=${person.hello:hello}阿黄
 person.pet.age=10
 ```
 
-## 5、Profile
 
-### 1、多Profile文件
+
+##5、Profile
+
+###1、多Profile文件
 
 我们在主配置文件编写的时候，文件名可以使是 application-{profile}.properties/yml
 
 默认使用applicatio.properties的配置；
 
-### 2、yml支持多文档块方式
+###2、yml支持多文档块方式
 
-
+```yaml
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+---
+server:
+  port: 8082
+spring:
+  profiles: dev
+---
+server:
+  port: 8083
+spring:
+  profiles: prod
+---
+```
 
 ### 3、激活指定profile
 
@@ -433,3 +458,64 @@ person.pet.age=10
 ​	3、虚拟机参数：
 
 ​		Run-->Edit Configuration-->Program arguments:-Dspring.profiles.active=dev
+
+
+
+## 6、配置文件加载位置
+
+Spring Boot启动会扫描以下位置的application.properties或者application.yml文件作为Spring Boot的默认文件
+
+**-file:./config/**
+
+**-file:./**
+
+**-classpath:/config/**
+
+**-classpath:/**
+
+* 优先级由高到低，高优先级地配置会覆盖低优先级的配置；
+
+* Spring Boot会从这四个位置全部加载主配置文件；**互补配置**；
+
+* 我们还可以通过spring。config。location来改变默认的文件配置
+
+  项目打包好以后，我们可以使用命令行参数的形式，启动项目的时候来指定配置文件的新位置，让加载的这些配置文件共同起作用形成互补配置；
+
+  
+
+##7、外部配置文件的加载顺序
+**Spring Boot也可以从以下位置加载配置；优先级从高到低；高优先级的配置会覆盖低优先级的配置，所有的配置会形成互补配置**
+
+1、命令行参数
+
+java -jar springboot-demo2-config2-0.0.1-SNAPSHOT.jar --server.port=8087 --server.context=path=/abc
+
+多个配置用空格分开
+
+2、来自java:comp/env的NDI属性
+
+3、来自Java系统属性（System.getProperties()）
+
+4、操作系统环境变量
+
+5、RandomValuePropertySource配置的random.*属性值
+
+**由jar包外向jar包内寻找；**
+
+**优先加载带profile**
+
+6、jar包外部的application-{profile}或application.yml（带spring.profile）配置文件
+
+7、jar包内部的applicaiton-{profile}.properties或application.yml（带spring.profile）配置文件
+
+**再来加载不带profile**
+
+8、jar包外部的applicaiton.properties或application.yml（不带spring.profile）配置文件
+
+9、jar包内部的applicaiton.properties或application.yml（不带spring.profile）配置文件
+
+10、@Confighuration注解类上的@PropertySource
+
+11、通过SpringApplication.setDefaultProperties指定的默认属性
+
+以上列举比较常用的配置方法，所有支持的及配置加载来源请参考官方文档。
