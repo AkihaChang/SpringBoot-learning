@@ -46,5 +46,8 @@ public class HelloWorld {
 
 ![SLF4j的各项使用方法](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/concrete-bindings.png)
 
+每一个日志的实现框架都有自己的配置文件。使用SLF4j后，**配置文件还是做成日志实现框架的配置文件**；
 
+### 2、遗留问题
 
+问题1（SLF4j）：Spring（commons-logging）、Hibernate（jboss-logging）、Mybatis、xxx，统一日志记录，即使是别的框架和我一起统一使用SLF4j输出
