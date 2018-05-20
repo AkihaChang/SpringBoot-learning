@@ -44,7 +44,7 @@ public class HelloWorld {
 
 图示：
 
-![SLF4j的各项使用方法](https://upload-images.jianshu.io/upload_images/7099290-4b28476ead1d7b1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SLF4j的各项使用方法](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/concrete-bindings.png)
 
 
 
