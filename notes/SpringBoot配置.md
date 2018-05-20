@@ -528,7 +528,7 @@ java -jar springboot-demo2-config2-0.0.1-SNAPSHOT.jar --server.port=8087 --serve
 
 [配置文件能配置的属性参照](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#appendix)
 
-**自动配置原理**：
+### 1、自动配置原理：
 
 1、Srping Boot启动的时候加载主配置类，开启了自动配置功能**@EnableAutoConfiguration**
 
@@ -691,8 +691,8 @@ public class HttpEncodingAutoConfiguration {
 	}
 
 	@Bean  //给容器中添加一个组件，这个组件的某些值需要从properties中获取
-	@ConditionalOnMissingBean
-	public CharacterEncodingFilter characterEncodingFilter() {
+	@ConditionalOnMissingBean  //判断容器中没有这个组件？
+  	public CharacterEncodingFilter characterEncodingFilter() {
 		CharacterEncodingFilter filter = new OrderedCharacterEncodingFilter();
 		filter.setEncoding(this.properties.getCharset().name());
 		filter.setForceRequestEncoding(this.properties.shouldForce(Type.REQUEST));
@@ -703,7 +703,7 @@ public class HttpEncodingAutoConfiguration {
 
 根据当前不同的条件判断，决定这个配置类是否生效？
 
-一旦这个配置类生效；这个配置类就会给容器中添加各种组件；这些组件的属性是从对应的properties类中获取的，这些类里面的每一个属性又是和配置文件绑定的
+一旦这个配置类生效；这个配置类就会给容器中添加各种组件；这些组件的属性是从对应的properties类中获取的，这些类里面的每一个属性又是和配置文件绑定的；
 
 5、所有在配置文件中能配置的属性都是在xxxProperties类中封装着；配置文件能配置什么就可以参照某个功能对应的这个属性类
 
@@ -713,3 +713,88 @@ public class HttpEncodingProperties {
 
    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 ```
+
+
+
+**精髓：**
+
+​	**1、Spring Boot启动汇价在大量的自动配置类**
+
+​	**2、我们查看自己所需要的功能有没有Spring Boot默认写好的自动配置类**
+
+​	**3、我们再来看这些自动配置类中到底配置了哪些组件（只要我们要用的组件有我们就不需要再来进行配置了）**
+
+​	**4、给容器中自动配置类添加组件的时候，会从properties类中获取某些属性我们就可以在配置文件中指定这些属性的值**
+
+
+
+xxxAutoConfiguration：自动配置类；
+
+给容器中添加组件
+
+xxxProperties：封装配置文件中相关属性；
+
+### 2、细节
+
+#### 1、@Conditional派生注解（Spring注解版原生的@Conitional作用）
+
+作用：必须是@Conditional指定的条件成立，才给容器中添加组件，配置类里面的所有内容才生效；
+
+| @Conditional扩展注解            | 作用（判断是否满足当前指定条件）                 |
+| ------------------------------- | ------------------------------------------------ |
+| @ConditionalOnJava              | 系统的java版本是否符合要求                       |
+| @ConditionalOnBean              | 容器中存在指定Bean                               |
+| @ConditionalOnMissingBean       | 容器中不存在指定Bean                             |
+| @ConditionalOnExpression        | 满足SpEL表达式指定                               |
+| @ConditionalOnClass             | 系统中有指定的类                                 |
+| @ConditionalOnMissingClass      | 系统中没有指定的类                               |
+| @ConditionalOnSingleCandidate   | 容器中只有一个指定的Bean，或者这个Bean是首选Bean |
+| @ConditionalOnProperty          | 系统总指定的属性是否有指定的值                   |
+| @ConditionalOnResource          | 类路径下是否存在指定资源                         |
+| @ConditionalOnWebApplication    | 当前是web环境                                    |
+| @ConditionalOnNotWebApplication | 当前不是web环境                                  |
+| @ConditionalOnJndi              | JNDI存在指定项                                   |
+
+**注：自动配置类必须在一定条件下才能生效**；
+
+我们怎么知道哪些自动配置类生效？
+
+我们可以通过在properties里面启用**debug=true**属性，来让控制台打印自动配置报告，这样我们就可以很方便的知道哪些自动配置类生效
+
+```java
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:  //自动配置类启用的
+-----------------
+
+   CodecsAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.http.codec.CodecConfigurer'; @ConditionalOnMissingClass did not find unwanted class (OnClassCondition)
+
+   CodecsAutoConfiguration.JacksonCodecConfiguration matched:
+      - @ConditionalOnClass found required class 'com.fasterxml.jackson.databind.ObjectMapper'; @ConditionalOnMissingClass did not find unwanted class (OnClassCondition)
+
+...
+          
+Negative matches:  //没有启用与没有匹配成功的自动配置类
+-----------------
+
+   ActiveMQAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'javax.jms.ConnectionFactory', 'org.apache.activemq.ActiveMQConnectionFactory' (OnClassCondition)
+
+   AopAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'org.aspectj.lang.annotation.Aspect', 'org.aspectj.lang.reflect.Advice', 'org.aspectj.weaver.AnnotatedElement' (OnClassCondition)
+...
+
+```
+
+
+
+
+
+
+
