@@ -50,4 +50,37 @@ public class HelloWorld {
 
 ### 2、遗留问题
 
-问题1（SLF4j）：Spring（commons-logging）、Hibernate（jboss-logging）、Mybatis、xxx，统一日志记录，即使是别的框架和我一起统一使用SLF4j输出
+问题1（SLF4j）：Spring（commons-logging）、Hibernate（jboss-logging）、Mybatis、xxx，统一日志记录，即使是别的框架和我一起统一使用SLF4j输出？
+
+![](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/legacy.png)
+
+**如何让系统中所有的日志都统一到SLF4j？**
+
+1、将系统中其他日志框架先排除出去；
+
+2、用中间包来替换原有的日志框架；
+
+3、我们再来导入SLF4j其他的实现
+
+
+
+## 3、Spring Boot日志关系
+
+```xml
+<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+Spring Boot使用它来做日志功能；
+
+```xml
+<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>2.0.2.RELEASE</version>
+      <scope>compile</scope>
+</dependency>
+```
+
