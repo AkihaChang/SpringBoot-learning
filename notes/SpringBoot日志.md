@@ -84,3 +84,34 @@ Spring Boot使用它来做日志功能；
 </dependency>
 ```
 
+底层依赖关系：
+
+![slf4j](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/slf4j.png)
+
+总结：
+
+​	1、Spring Boot底层也是使用slf4j+logback的方式进行日志记录；
+
+​	2、Spring Boot也把其他的日志都踢换成了slf4j；
+
+​	3、中间替换包？
+
+```java
+protected Logger getSLF4JLogger(LogRecord record) {
+        String name = record.getLoggerName();
+        if (name == null) {
+            name = UNKNOWN_LOGGER_NAME;
+        }
+        return LoggerFactory.getLogger(name);
+    }
+```
+
+​	4、如果我们要引入其他框架，一定要把这个框架默认的日志依赖移除掉！
+
+​	例如：Spring框架用的是commons-logging
+
+
+
+**Spring Boot能自动适配所有的日志，而底层使用slf4j+logback的方式记录日志，引入其他框架的时候，只需要把整个框架依赖的日志框架排除掉。**
+
+​	
