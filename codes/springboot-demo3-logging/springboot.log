@@ -1,0 +1,17 @@
+2018-05-21 17:36:52.726  INFO 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : Starting SpringbootDemo3LoggingApplicationTests on DESKTOP-JMK9TA1 with PID 13336 (started by akiha in E:\GitHub-Repositories\SpringBoot-learning\codes\springboot-demo3-logging)
+2018-05-21 17:36:52.729 DEBUG 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : Running with Spring Boot v2.0.2.RELEASE, Spring v5.0.6.RELEASE
+2018-05-21 17:36:52.733  INFO 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : No active profile set, falling back to default profiles: default
+2018-05-21 17:36:52.846  INFO 13336 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@53fb3dab: startup date [Mon May 21 17:36:52 CST 2018]; root of context hierarchy
+2018-05-21 17:36:55.674  INFO 13336 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-05-21 17:36:56.243  INFO 13336 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.web.context.support.GenericWebApplicationContext@53fb3dab: startup date [Mon May 21 17:36:52 CST 2018]; root of context hierarchy
+2018-05-21 17:36:56.355  INFO 13336 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-05-21 17:36:56.357  INFO 13336 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-05-21 17:36:56.405  INFO 13336 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-05-21 17:36:56.405  INFO 13336 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-05-21 17:36:56.822  INFO 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : Started SpringbootDemo3LoggingApplicationTests in 5.411 seconds (JVM running for 7.409)
+2018-05-21 17:36:57.128 TRACE 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : 这是trace日志...
+2018-05-21 17:36:57.128 DEBUG 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : 这是debug日志...
+2018-05-21 17:36:57.130  INFO 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : 这是info日志...
+2018-05-21 17:36:57.131  WARN 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : 这是warn日志...
+2018-05-21 17:36:57.131 ERROR 13336 --- [main] s.SpringbootDemo3LoggingApplicationTests : 这是error日志...
+2018-05-21 17:36:57.146  INFO 13336 --- [Thread-2] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@53fb3dab: startup date [Mon May 21 17:36:52 CST 2018]; root of context hierarchy

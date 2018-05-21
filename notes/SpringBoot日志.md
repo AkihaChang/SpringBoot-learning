@@ -24,7 +24,7 @@ Spring Boot：底层是Spring框架，Spring框架默认是用JCL；而**Spring 
 
 ## 2、SLF4j使用
 
-### 1、如何在系统中使用SLF4j
+### 1、如何在系统中使用SLF4j（https://www.slf4j.org）
 
 以后开发的时候，日志记录方法的调用，不应该直接调用日志的实现类，而是调用日志抽象层里面的方法；
 
@@ -114,4 +114,70 @@ protected Logger getSLF4JLogger(LogRecord record) {
 
 **Spring Boot能自动适配所有的日志，而底层使用slf4j+logback的方式记录日志，引入其他框架的时候，只需要把整个框架依赖的日志框架排除掉。**
 
-​	
+
+
+## 4、日志的使用
+
+### 1、默认配置
+
+Spring Boot默认帮我们配置好了日志
+
+```java
+//记录器
+    Logger logger = LoggerFactory.getLogger(getClass());
+    @Test
+    public void contextLoads() {
+
+        //日志级别：
+        //由低到高：  trace<debug<info<warn<error
+        //可以调整输出的日志级别；日志就只会在这个级别以及以后的高级别生效
+        logger.trace("这是trace日志...");
+        logger.debug("这是debug日志...");
+        //Spring Boot默认给我们是info级别的，没有指定级别的就用Spring Boot默认规定的级别；root级别
+        logger.info("这是info日志...");
+        logger.warn("这是warn日志...");
+        logger.error("这是error日志...");
+    }
+```
+
+```xml
+<!--
+	日志输出格式：
+		%d 表示日期时间，
+		%thread 表示线程名，
+		%-5level：级别从左显示5个字符宽度
+		%logger{50} 表示logger名字最长50个字符，否则按照句点分割。
+		%msg：日止消息，
+		%n 是换行符
+-->
+%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
+```
+
+Spring Boot修改日志的默认配置
+
+```prop
+logging.level.com.zzy=trace
+
+
+# 不指定路径在当前项目下生成springboot.log日志
+# 可以指定完整的路径
+#logging.file=E:/springboot.log
+
+# 在当前磁盘的根路径下创建spring文件夹里面的log文件夹；使用spring.log作为默认文件
+logging.path=/spring/log
+
+# 在控制台输出的日志格式
+logging.pattern.console=%d{yyyy-MM-dd} [%thread] %-5level %logger{50} - %msg%n
+# 指定文件中日志输出的格式
+logging.pattern.file=%d{yyyy-MM-dd} [%thread] %-5level %logger{50} - %msg%n
+```
+
+| logging.file | logging.path | Example  | Description                      |
+| ------------ | ------------ | -------- | -------------------------------- |
+| (none)       | (none)       |          | 只在控制台输出                   |
+| 指定文件名   | (none)       | my.log   | 输出日志到my.log                 |
+| (none)       | 指定目录     | /var/log | 输出到指定目录的spring.log文件中 |
+
+### 2、指定配置
+
+给类路径下放上每个日志框架自己的配置文件即可；Spring Boot就不适用他默认配置的了
