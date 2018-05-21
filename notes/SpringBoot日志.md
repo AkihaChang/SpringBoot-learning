@@ -181,3 +181,129 @@ logging.pattern.file=%d{yyyy-MM-dd} [%thread] %-5level %logger{50} - %msg%n
 ### 2、指定配置
 
 给类路径下放上每个日志框架自己的配置文件即可；Spring Boot就不适用他默认配置的了
+
+![logging-system](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/logging-system.png)
+
+logback.xml：直接就被日志框架识别了；
+
+logback-spring.xml：日志框架就直接加载日志的配置项，由Spring Boot解析日志配置，可以使用Spring Boot的高级Profile**功能**
+
+```xml
+<springProfile name="staging">
+    <!-- configuration to be enabled when the "staging" profile is active -->
+    <!-- 可以指定某个配置只在某个环境下生效 -->
+</springProfile>
+```
+
+否则
+
+```java
+no aaplicable action for [springProfile]
+```
+
+```xml
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <springProfile name="dev">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ------> [%thread] %-5level %logger{50} - %msg%n</pattern>
+            </springProfile>
+            <springProfile name="!dev">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ======= [%thread] %-5level %logger{50} - %msg%n</pattern>
+            </springProfile>
+        </encoder>
+    </appender>
+```
+
+
+
+## 5、切换日志框架
+
+可以按照slf4j的日志适配图，进行相关的切换
+
+slf4j+log4j2的方式
+
+```xml
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- log4j2 日志记录-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <!-- 加上这个才能辨认到log4j2.yml文件 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+```
+
+log4j2.yml
+
+```yml
+Configuration:
+  status: warn
+
+  Properties: # 定义全局变量
+    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：
+    #测试：-Dlog.level.console=warn -Dlog.level.xjj=trace
+    #生产：-Dlog.level.console=warn -Dlog.level.xjj=info
+    - name: log.level.console
+      value: trace
+    - name: log.level.lee
+      value: debug
+    - name: log.path
+      value: D://log//logs
+    - name: project.name
+      value: my-spring-boot
+
+  Appenders:
+    Console: #输出到控制台
+      name: CONSOLE
+      target: SYSTEM_OUT
+      ThresholdFilter:
+        level:  ${sys:log.level.console} # “sys:”表示：如果VM参数中没指定这个变量值，则使用本文件中定义的缺省全局变量值
+        onMatch: ACCEPT
+        onMismatch: DENY
+      PatternLayout:
+        #pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n"
+        pattern: "%highlight{%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n}{STYLE=Logback}"
+    RollingFile:
+    - name: ROLLING_FILE
+      ignoreExceptions: false
+      fileName: ${log.path}/${project.name}.log
+      filePattern: "${log.path}/$${date:yyyy-MM}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+           size: "128 MB"
+      DefaultRolloverStrategy:
+         max: 1000
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: ROLLING_FILE
+      Logger: # 为com.lee包配置特殊的Log级别，方便调试
+        - name: com.lee
+          additivity: false
+          level: ${sys:log.level.lee}
+          AppenderRef:
+            - ref: CONSOLE
+            - ref: ROLLING_FILE
+```
+
