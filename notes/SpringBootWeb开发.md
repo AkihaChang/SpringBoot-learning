@@ -61,3 +61,17 @@ xxxProperties：配置类来封装配置文件的内容
 ​	webjars：以jar包的形式引入静态资源
 
 ​	http://www.webjars.org
+
+![jquery文件目录](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/jquery.png)
+
+​	页面访问路径：localhost:8080/webjars/jquery/3.3.1-1/jquery.js
+
+```xml
+<!-- 引入jQuery 在访问的时候只需要写webjars下面资源的名称即可 -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.3.1-1</version>
+        </dependency>
+```
+
