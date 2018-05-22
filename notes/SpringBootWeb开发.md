@@ -52,6 +52,63 @@ xxxProperties：配置类来封装配置文件的内容
 								.setCacheControl(cacheControl));
 			}
 		}
+		
+		//配置欢迎页的映射
+		@Bean
+		public WelcomePageHandlerMapping welcomePageHandlerMapping(
+				ApplicationContext applicationContext) {
+			return new WelcomePageHandlerMapping(
+					new TemplateAvailabilityProviders(applicationContext),
+					applicationContext, getWelcomePage(),
+					this.mvcProperties.getStaticPathPattern());
+		}
+		
+		//配置喜欢的图标
+		@Configuration
+		@ConditionalOnProperty(value = "spring.mvc.favicon.enabled", matchIfMissing = true)
+		public static class FaviconConfiguration implements ResourceLoaderAware {
+
+			private final ResourceProperties resourceProperties;
+
+			private ResourceLoader resourceLoader;
+
+			public FaviconConfiguration(ResourceProperties resourceProperties) {
+				this.resourceProperties = resourceProperties;
+			}
+
+			@Override
+			public void setResourceLoader(ResourceLoader resourceLoader) {
+				this.resourceLoader = resourceLoader;
+			}
+
+			@Bean
+			public SimpleUrlHandlerMapping faviconHandlerMapping() {
+				SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+				mapping.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+                 //所有的 **/favicon.ico
+				mapping.setUrlMap(Collections.singletonMap("**/favicon.ico",
+						faviconRequestHandler()));
+				return mapping;
+			}
+
+			@Bean
+			public ResourceHttpRequestHandler faviconRequestHandler() {
+				ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
+				requestHandler.setLocations(resolveFaviconLocations());
+				return requestHandler;
+			}
+
+			private List<Resource> resolveFaviconLocations() {
+				String[] staticLocations = getResourceLocations(
+						this.resourceProperties.getStaticLocations());
+				List<Resource> locations = new ArrayList<>(staticLocations.length + 1);
+				Arrays.stream(staticLocations).map(this.resourceLoader::getResource)
+						.forEach(locations::add);
+				locations.add(new ClassPathResource("/"));
+				return Collections.unmodifiableList(locations);
+			}
+
+		}
 ```
 
 
@@ -75,3 +132,21 @@ xxxProperties：配置类来封装配置文件的内容
         </dependency>
 ```
 
+
+
+2、"/**"访问当前项目的任何资源（静态资源的文件夹）
+
+```java
+"classpath:/META-INF/resources/"
+"classpath:/resources/",
+"classpath:/static/"
+"classpath:/public/"
+```
+
+localhost:8080/abc：去静态资源文件夹里面找abc
+
+3、欢迎页；静态资源文件夹下的所有index.html页面；被"/**"映射；
+
+​	localhost:8080/ 找index页面
+
+4、所有的**/favicon.ico 都是在静态资源文件下找
