@@ -150,3 +150,7 @@ localhost:8080/abc：去静态资源文件夹里面找abc
 ​	localhost:8080/ 找index页面
 
 4、所有的**/favicon.ico 都是在静态资源文件下找
+
+
+
+##3、模板引擎
