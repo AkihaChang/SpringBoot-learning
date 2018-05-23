@@ -153,4 +153,31 @@ localhost:8080/abc：去静态资源文件夹里面找abc
 
 
 
-##3、模板引擎
+## 3、模板引擎
+
+JSP、Velocity、Freemarker、Thymeleaf；
+
+![模板引擎](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/template-engine.png)
+
+Srping Boot推荐的Thymeleaf模板引擎；
+
+语法更简单，功能更强大；
+
+
+
+### 1、引入thymeleaf
+
+```xml
+<!-- 引入thymeleaf-->
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+
+<!-- 切换thymeleaf版本 -->
+<!-- 布局功能的支持程序 thymeleaf3主程序 layout2以上版本 -->
+<!-- thymeleaf2 layout1 -->
+<thymeleaf.version>3.0.9 RELEASE</thymeleaf.version>
+<thyme-layout-dialect.version>2.2.2</thyme-layout-dialect.version>
+```
+
