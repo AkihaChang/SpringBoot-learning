@@ -103,7 +103,7 @@ ships: [Richelieu,Missouri,Enterprise]
 
 ## 3、配置文件注入
 
-###1、使用yaml（yml）注入的方法
+### 1、使用yaml（yml）注入的方法
 
 配置文件（yaml）：
 
