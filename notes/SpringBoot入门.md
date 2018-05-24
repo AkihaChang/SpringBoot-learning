@@ -1,6 +1,6 @@
 # 一、Srping Boot入门
 
-##1、Spring Boot简介
+## 1、Spring Boot简介
 
 > 简化 Spring应用开发的一个框架；
 >
@@ -10,7 +10,7 @@
 
 
 
-##2、微服务
+## 2、微服务
 
 2014，martin fowler提出
 
@@ -28,7 +28,7 @@
 
 
 
-##3、环境配置
+## 3、环境配置
 
 环境约束：
 
@@ -40,7 +40,7 @@
 
 -Spring Boot2.0.2.RELEASE：2.0.2
 
-###1、maven设置；
+### 1、maven设置；
 
 给maven的settings.xml配置文件的profiles标签添加
 
@@ -59,7 +59,7 @@
 </profile>
 ```
 
-###2、Idea设置
+### 2、Idea设置
 
 ```
 File | Settings | Build, Execution, Deployment | Build Tools | Maven
@@ -73,9 +73,9 @@ Maven home directory、User Settings file、Local repository
 
 功能：浏览器发送hello请求，服务器接受请求并处理，相应Hello World字符串
 
-###1、创建一个maven工程（jar）
+### 1、创建一个maven工程（jar）
 
-###2、导入Spring Boot相关依赖
+### 2、导入Spring Boot相关依赖
 
 ```xml
 <parent>
@@ -91,7 +91,7 @@ Maven home directory、User Settings file、Local repository
 </dependencies>
 ```
 
-###3、编写一个主程序：用于启动Spring Boot应用
+### 3、编写一个主程序：用于启动Spring Boot应用
 
 ```java
 /**
@@ -107,7 +107,7 @@ public class HelloWorldMainApplication {
 }
 ```
 
-###4、编写相关的Controller、Service
+### 4、编写相关的Controller、Service
 
 ```java
 @Controller
@@ -121,13 +121,13 @@ public class HelloController {
 }
 ```
 
-###5、运行主程序测试
+### 5、运行主程序测试
 
 ````html
 http://localhost:8080/hello
 ````
 
-###6、简化部署工作
+### 6、简化部署工作
 
 ```xml
 <!-- 这个插件，可以将应用打包为一个可执行的jar包 -->
@@ -145,7 +145,7 @@ http://localhost:8080/hello
 
 
 
-##5、Hello World研究
+## 5、Hello World研究
 
 ### 1、pom文件
 
@@ -294,7 +294,7 @@ J2EE的整体整合和解决方案都在"spring-boot-autoconfigure-2.0.2.RELEASE
 
 
 
-##6、使用Spring Initializer快速创建Spring Boot项目
+## 6、使用Spring Initializer快速创建Spring Boot项目
 
 IDE都支持使用Spring的项目创建向导快速创建一个Spring Boot项目；
 
