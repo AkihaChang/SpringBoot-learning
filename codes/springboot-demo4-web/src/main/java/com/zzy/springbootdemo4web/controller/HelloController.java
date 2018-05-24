@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +23,8 @@ public class HelloController {
     private String success(Map<String, Object> map){
         //classpath:templates/success.html;
 
-        map.put("hello", "你好");
-
+        map.put("hello", "<h1>你好</h1>");
+        map.put("users", Arrays.asList("密苏里","黎塞留","企业"));
         return "success";
     }
 }
