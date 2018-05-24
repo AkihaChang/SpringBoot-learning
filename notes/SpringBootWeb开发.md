@@ -174,10 +174,71 @@ Srping Boot推荐的Thymeleaf模板引擎；
 	<artifactId>spring-boot-starter-thymeleaf</artifactId>
 </dependency>
 
-<!-- 切换thymeleaf版本 -->
+<!-- 切换thymeleaf版本 （Spring Boot 1.5x版本需要，2.0以上版本默认thymeleaf 3.0+）-->
 <!-- 布局功能的支持程序 thymeleaf3主程序 layout2以上版本 -->
 <!-- thymeleaf2 layout1 -->
-<thymeleaf.version>3.0.9 RELEASE</thymeleaf.version>
-<thyme-layout-dialect.version>2.2.2</thyme-layout-dialect.version>
+<properties>
+	<thymeleaf.version>3.0.9 RELEASE</thymeleaf.version>
+	<thyme-layout-dialect.version>2.2.2</thyme-layout-dialect.version>
+</properties>
 ```
 
+### 2、Thymeleaf使用&语法
+
+```java
+@ConfigurationProperties(prefix = "spring.thymeleaf")
+public class ThymeleafProperties {
+
+	private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
+
+	public static final String DEFAULT_PREFIX = "classpath:/templates/";
+
+	public static final String DEFAULT_SUFFIX = ".html";
+    //只要我们把Html页面放在"classpath:/templates/"，thymeleaf就能自动渲染
+```
+
+只要我们吧Htm页面放在classpath:/templates/，thymeleaf就能自动渲染；
+
+使用：
+
+1、饶茹thymeleaf的名称空间
+
+```xml
+<html lang="en" xmlns:th="http://www.thymeleaf.org"></html>
+```
+
+2、使用thymeleaf语法
+
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>成功</title>
+</head>
+<body>
+    <h1>成功！</h1>
+    <!-- th:text：将div练得文本内容设置为-->
+    <div th:text="${hello}"></div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>成功</title>
+</head>
+<body>
+    <h1>成功！</h1>
+    <!-- th:text：将div练得文本内容设置为-->
+    <div th:text="${hello}"></div>
+
+</body>
+</html>
+```
+
+### 3、语法规则
+
+1、th:text改变当前元素里面的文本内容；
+
+​	th:任意html属性，来替换原生属性的值

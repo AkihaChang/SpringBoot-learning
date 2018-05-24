@@ -25,8 +25,8 @@
         <!-- 切换thymeleaf版本 -->
         <!-- 布局功能的支持程序 thymeleaf3主程序 layout2以上版本 -->
         <!-- thymeleaf2 layout1 -->
-        <thymeleaf.version>3.0.9 RELEASE</thymeleaf.version>
-        <thyme-layout-dialect.version>2.2.2</thyme-layout-dialect.version>
+        <!--<thymeleaf.version>3.0.9 RELEASE</thymeleaf.version>-->
+        <!--<thyme-layout-dialect.version>2.2.2</thyme-layout-dialect.version>-->
     </properties>
 
     <dependencies>
