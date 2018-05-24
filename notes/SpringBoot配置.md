@@ -11,7 +11,7 @@ Spring Boot使用一个全局配置文件,配置文件名是固定的
 
 
 
-##2、YAML语法
+## 2、YAML语法
 
 **YAML**（YAML A Markup Language）
 
@@ -48,7 +48,7 @@ server:
 
 属性和值也是大小写敏感；
 
-###2、值得写法
+### 2、值得写法
 
 #### 字面量：普通的值（数字、字符串、布尔）
 
@@ -82,7 +82,7 @@ ship:
 ship: {name: Missouri,class: Battleship}
 ```
 
-####数组（List、Set）：
+#### 数组（List、Set）：
 
 用**- 值**表示数组中的一个元素
 
@@ -229,7 +229,7 @@ public class Person {
 </dependency>
 ```
 
-###2、使用properties的注入方法
+### 2、使用properties的注入方法
 
 另外：配置文件（.properties）：
 
@@ -391,9 +391,9 @@ public class MyAppConfig {
 
 
 
-##4、配置文件占位符
+## 4、配置文件占位符
 
-####1、随机数
+#### 1、随机数
 
 ```java
 random.value、{random.Int}、${randon.long}
@@ -416,15 +416,15 @@ person.pet.age=10
 
 
 
-##5、Profile
+## 5、Profile
 
-###1、多Profile文件
+### 1、多Profile文件
 
 我们在主配置文件编写的时候，文件名可以使是 application-{profile}.properties/yml
 
 默认使用applicatio.properties的配置；
 
-###2、yml支持多文档块方式
+### 2、yml支持多文档块方式
 
 ```yaml
 server:
@@ -483,7 +483,7 @@ Spring Boot启动会扫描以下位置的application.properties或者application
 
   
 
-##7、外部配置文件的加载顺序
+## 7、外部配置文件的加载顺序
 **Spring Boot也可以从以下位置加载配置；优先级从高到低；高优先级的配置会覆盖低优先级的配置，所有的配置会形成互补配置**
 
 1、命令行参数
