@@ -318,3 +318,73 @@ Special tokens:  //特殊操作
 Page 17 of 104No-Operation:
 ```
 
+
+
+## 4、SpringMVC自动配置
+
+https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-developing-web-application
+
+Spring Boot自动配置好了SpringMVC
+
+以下是Spring Boot对SpringMVC的默认配置：
+
+- Inclusion of `ContentNegotiatingViewResolver` and `BeanNameViewResolver` beans.
+
+  - 自动配置了ViewResolver（视图解析器：根据方法的返回值得到视图对象（View），试图对象决定如何渲染（转发？重定向？））
+  - `ContentNegotiatingViewResolver` ：组合所有的视图解析器；
+  - **如何定制：我们可以自己给容器中添加一个视图解析器；自动的将其组合进来；**
+
+- Support for serving static resources, including support for WebJars (covered [later in this document](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-spring-mvc-static-content))).  //静态资源文件夹路径和WebJars
+
+- Automatic registration of `Converter`, `GenericConverter`, and `Formatter` beans.
+
+  - Converter：转换器；public String hello(User user)：类型转换使用Converter
+
+  - Formatter：格式化器；2018-5-25格式化为Date；
+
+    ```java
+    @Bean
+    @ConditionalOnProperty(Prefix = "spring.mvc", name = "date-format")  //在文件中配置日期格式化的规则
+    public Formatter<Date> dateFormatter() {
+        return new DateFormatter(this.mvcProperties.getDateFormat());  //日期格式化组件
+    }
+    ```
+
+    **自己添加的格式化器转换器我们只要放在容器中即可。**
+
+- Support for `HttpMessageConverters` (covered [later in this document](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-spring-mvc-message-converters)).
+
+  - `HttpMessageConverters`：SpringMVC用来转换Http请求和相应的；例如把User以json方式返回；
+
+  - `HttpMessageConverters`是从容器中确定的；获取所有的HttpMessageConverter；
+
+    **自己给容器中添加HttpMessageConverter，只需要将自己的组件注册在容器中（@Bean，@Component）**
+
+- Automatic registration of `MessageCodesResolver` (covered [later in this document](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-spring-message-codes)).  //定义错误代码生成规则
+
+- Static `index.html` support.  //静态首页访问
+
+- Custom `Favicon` support (covered [later in this document](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-spring-mvc-favicon)).  //favion.ico
+
+- Automatic use of a `ConfigurableWebBindingInitializer` bean (covered [later in this document](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-spring-mvc-web-binding-initializer)).  //我们可**以配置一个`ConfigurableWebBindingInitializer`来替换默认的；（添加到容器）**
+
+  ```java
+  初始化WebDataBinder；
+  请求数据---JavaBean；
+  ```
+
+  **org.springframework.boot.autoconfigure.web：web的所有自动配置场景**
+
+If you want to keep Spring Boot MVC features and you want to add additional [MVC configuration](https://docs.spring.io/spring/docs/5.0.6.RELEASE/spring-framework-reference/web.html#mvc) (interceptors, formatters, view controllers, and other features), you can add your own `@Configuration` class of type `WebMvcConfigurer` but **without** `@EnableWebMvc`. If you wish to provide custom instances of `RequestMappingHandlerMapping`, `RequestMappingHandlerAdapter`, or`ExceptionHandlerExceptionResolver`, you can declare a `WebMvcRegistrationsAdapter` instance to provide such components.
+
+If you want to take complete control of Spring MVC, you can add your own `@Configuration` annotated with `@EnableWebMvc`.
+
+
+
+## 5、如何修改Spring Boot的默认配置
+
+模式：
+
+​	1、Spring Boot在自动配置很多组件的时候，先看容器中有没有自己配制的（@Bean、@Component）如果有，就用用户配置的，如果没有，才自动配置；如果有些组件可以有多个（ViewResolver）将用户配置和自己默认的组合起来；
+
+​	2、
