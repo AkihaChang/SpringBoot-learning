@@ -15,16 +15,16 @@ public class SpringbootDemo4WebApplication {
         SpringApplication.run(SpringbootDemo4WebApplication.class, args);
     }
 
-    @Bean
-    public ViewResolver myViewResolver(){
-        return myViewResolver();
-    }
-
-    private static class myViewResolver implements ViewResolver {
-
-        @Override
-        public View resolveViewName(String viewName, Locale locale) throws Exception {
-            return null;
-        }
-    }
+//    @Bean
+//    public ViewResolver myViewResolver(){
+//        return myViewResolver();
+//    }
+//
+//    private static class myViewResolver implements ViewResolver {
+//
+//        @Override
+//        public View resolveViewName(String viewName, Locale locale) throws Exception {
+//            return null;
+//        }
+//    }
 }
