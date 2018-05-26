@@ -521,3 +521,26 @@ public class WebMvcAutoConfiguration {
 ​	1、Spring Boot在自动配置很多组件的时候，先看容器中有没有自己配制的（@Bean、@Component）如果有，就用用户配置的，如果没有，才自动配置；如果有些组件可以有多个（ViewResolver）将用户配置和自己默认的组合起来；
 
 ​	2、在Spring Boot中，会有非常多的xxxConfigurer帮助我们进行扩展配置
+
+
+
+## 6、RestfulCRUD
+
+1、默认访问首页
+
+```java
+@Configuration
+public class MyMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        //super.addViewControllers(registry);
+        //浏览器发送"/zzy"请求，同样来到success
+        registry.addViewController("/zzy").setViewName("/success");
+        registry.addViewController("/").setViewName("login");
+        registry.addViewController("/index.html").setViewName("login");
+    }
+
+}
+```
+
