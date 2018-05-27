@@ -526,7 +526,7 @@ public class WebMvcAutoConfiguration {
 
 ## 6、RestfulCRUD
 
-1、默认访问首页
+### 1、默认访问首页
 
 ```java
 @Configuration
@@ -544,3 +544,8 @@ public class MyMvcConfig implements WebMvcConfigurer {
 }
 ```
 
+### 2、国际化
+
+1、编写国际化配置文件；
+
+2、使用ResourceBundleMessageSource管理国际化资源文件
