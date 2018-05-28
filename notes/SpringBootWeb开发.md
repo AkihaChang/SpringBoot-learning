@@ -549,3 +549,5 @@ public class MyMvcConfig implements WebMvcConfigurer {
 1、编写国际化配置文件；
 
 2、使用ResourceBundleMessageSource管理国际化资源文件
+
+3、
