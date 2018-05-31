@@ -557,3 +557,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
 步骤：
 
 1、编写国际化配置文件，抽取页面需要显示的国际化消息
+
+![i18n-properties](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/i18n-properties.png)
+
+2、Spring Boot制度牌哪个配置好了管理国际化资源文件的组件
