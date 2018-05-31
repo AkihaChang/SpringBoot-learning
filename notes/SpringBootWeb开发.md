@@ -546,12 +546,14 @@ public class MyMvcConfig implements WebMvcConfigurer {
 
 ### 2、国际化
 
-1、编写国际化配置文件；
+**1、编写国际化配置文件；**
 
 2、使用ResourceBundleMessageSource管理国际化资源文件
 
-3、
+3、在页面使用fmt:message去除国际化内容
 
-4、
 
-5、
+
+步骤：
+
+1、编写国际化配置文件，抽取页面需要显示的国际化消息
