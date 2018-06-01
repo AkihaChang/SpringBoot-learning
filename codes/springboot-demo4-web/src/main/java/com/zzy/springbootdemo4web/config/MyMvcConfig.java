@@ -1,6 +1,9 @@
 package com.zzy.springbootdemo4web.config;
 
+import com.zzy.springbootdemo4web.component.MyLocaleResolver;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 //使用WebMvcConfigurerAdapter可以扩展SpringMVC的功能
@@ -17,5 +20,8 @@ public class MyMvcConfig implements WebMvcConfigurer {
         registry.addViewController("/index.html").setViewName("login");
     }
 
-
+    @Bean
+    public LocaleResolver localeResolver() {
+        return new MyLocaleResolver();
+    }
 }
