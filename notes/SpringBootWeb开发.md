@@ -644,6 +644,8 @@ public class MessageSourceAutoConfiguration {
 
 注：修改系统默认编码格式
 
+![default-file-settings-encoding](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/default-file-settings-encoding.png)
+
 
 
 原理：
