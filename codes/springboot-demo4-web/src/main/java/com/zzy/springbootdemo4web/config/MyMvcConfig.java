@@ -1,5 +1,6 @@
 package com.zzy.springbootdemo4web.config;
 
+import com.zzy.springbootdemo4web.component.LoginHandlerInterceptor;
 import com.zzy.springbootdemo4web.component.MyLocaleResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,16 @@ public class MyMvcConfig implements WebMvcConfigurer {
         registry.addViewController("/zzy").setViewName("/success");
         registry.addViewController("/").setViewName("login");
         registry.addViewController("/index.html").setViewName("login");
+        registry.addViewController("/main.html").setViewName("dashboard");
+
+    }
+
+    //注册拦截器
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //静态资源不会被拦截，Spring Boot已经最好了静态资源映射
+        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
+                .excludePathPatterns("/index.html","/","/user/login");
     }
 
     @Bean
