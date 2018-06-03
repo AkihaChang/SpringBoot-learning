@@ -732,5 +732,116 @@ spring.thymeleaf.cache=false
 <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
 ```
 
-3、拦截器进行登录检查
+### 4、拦截器进行登录检查
+
+```java
+**
+ * 登录检查，
+ */
+public class LoginHandlerInterceptor implements HandlerInterceptor {
+    //目标方法执行之前
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        Object user = request.getSession().getAttribute("loginUser");
+        if(user!=null) {
+            return true;
+        }else {
+            request.setAttribute("msg","没有权限请先登录");
+            request.getRequestDispatcher("/index.html").forward(request,response);
+            return false;
+        }
+    }
+}
+
+ //注册拦截器（在MyMvcConfig中添加）
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //静态资源不会被拦截，Spring Boot已经最好了静态资源映射
+        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
+                .excludePathPatterns("/index.html","/","/user/login");
+    }
+```
+
+### 5、CRUD员工列表
+
+实验要求：
+
+1、RestfulCRUD：CRUD满足Rest风格；
+
+URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
+
+|      | 普通CRUD（uri区分操作）  | RestfulCRUD        |
+| ---- | ------------------------ | ------------------ |
+| 查询 | getUser                  | user---GET         |
+| 添加 | addUser                  | user---POST        |
+| 修改 | updateUser?id=xxx&xxx=xx | user/{id}---PUT    |
+| 删除 | deleteUser?id=1          | user/{id}---DELETE |
+
+2、实验的请求架构：
+
+|                                      | 请求URI | 请求方式 |
+| ------------------------------------ | ------- | -------- |
+| 查询所有用户                         | users   | GET      |
+| 查询某个用户（来到修改页面）         | user/1  | GET      |
+| 来到添加页面                         | user    | GET      |
+| 添加用户                             | user    | POST     |
+| 来到修改页面（查出用户进行信息回显） | user/1  | GET      |
+| 修改用户                             | user    | PUT      |
+| 删除用户                             | user/1  | DELETE   |
+
+3、员工列表：
+
+#### thymeleaf公共元素抽取
+
+```html
+//1、抽取公共片段
+<div th:fragment="copy">
+&copy; 2011 The Good Thymes Virtual Grocery
+</div>
+
+//2、引入公共片段
+<div th:insert="~{footer :: copy}"></div>
+//~{templatename::selector}：模板名：：选择器
+//~{templatename::fragmentname}：模板名：：片段名
+
+//3、默认效果：
+//insert的功能片段在div标签中
+//如果使用th:insert等属性进行引入
+```
+
+3中引入功能片段的th属性：
+
+**th:insert**：将公共片段整个插入到声明引入的元素中
+
+**th:replace**：将声明引入的元素替换为公共片段
+
+**th:include**：将被引入的片段的内容包含进这个标签中
+
+```html
+<footer th:fragment="copy">
+&copy; 2011 The Good Thymes Virtual Grocery
+</footer>
+
+//引入方式：
+<div th:insert="footer :: copy"></div>
+<div th:replace="footer :: copy"></div>
+<div th:include="footer :: copy"></div>
+
+//效果：
+<div>
+    <footer>
+    &copy; 2011 The Good Thymes Virtual Grocery
+    </footer>
+</div>
+
+<footer>
+&copy; 2011 The Good Thymes Virtual Grocery
+</footer>
+
+<div>
+	&copy; 2011 The Good Thymes Virtual Grocery
+</div>
+```
+
+
 

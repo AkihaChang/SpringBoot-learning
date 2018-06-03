@@ -5,6 +5,7 @@ import com.zzy.springbootdemo4web.entities.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,5 +36,18 @@ public class EmployeeDao {
 
         employee.setDepartment(departmentDao.getDepartment(employee.getDepartment().getId()));
         employees.put(employee.getId(), employee);
+    }
+
+    //查询所有员工
+    public Collection<Employee> getAll() {
+        return  employees.values();
+    }
+
+    public Employee get(Integer id) {
+        return employees.get(id);
+    }
+
+    public void delete(Integer id) {
+        employees.remove(id);
     }
 }
