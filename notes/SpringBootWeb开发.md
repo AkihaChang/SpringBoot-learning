@@ -807,7 +807,7 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 //3、默认效果：
 //insert的功能片段在div标签中
 //如果使用th:insert等属性进行引入，可以不用写~{}:
-行内写法可以加上：[[~{}]]；[(~{})]；
+//行内写法可以加上：[[~{}]]；[(~{})]；
 ```
 
 3种引入功能片段的th属性：
@@ -820,15 +820,15 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 
 ```html
 <footer th:fragment="copy">
-&copy; 2011 The Good Thymes Virtual Grocery
+	&copy; 2011 The Good Thymes Virtual Grocery
 </footer>
 
-//引入方式：
+<!-- 引入方式：-->
 <div th:insert="footer :: copy"></div>
 <div th:replace="footer :: copy"></div>
 <div th:include="footer :: copy"></div>
 
-//效果：
+<!-- 效果：-->
 <div>
     <footer>
     &copy; 2011 The Good Thymes Virtual Grocery
@@ -836,7 +836,7 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 </div>
 
 <footer>
-&copy; 2011 The Good Thymes Virtual Grocery
+	&copy; 2011 The Good Thymes Virtual Grocery
 </footer>
 
 <div>

@@ -22,7 +22,7 @@ public class EmployeeController {
         //放在请求域中
         model.addAttribute("emps",employees);
         //thymeleaf默认就会拼串
-        //classpath:/templates/
+        //classpath:/templates/xxx.html
         return "emps/list";
     }
 }

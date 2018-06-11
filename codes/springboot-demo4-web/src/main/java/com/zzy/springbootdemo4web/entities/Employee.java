@@ -10,12 +10,13 @@ public class Employee {
     private Department department;
     private Date birth;
 
-    public Employee(int id, String lastName, String email, int gender, Department department) {
+    public Employee(int id, String lastName, String email, int gender, Department department, Date birth) {
         this.id = id;
         this.lastName = lastName;
         this.email = email;
         this.gender = gender;
         this.department = department;
+        this. birth = birth;
     }
 
     @Override
