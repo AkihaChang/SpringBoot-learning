@@ -16,7 +16,7 @@ public class Employee {
         this.email = email;
         this.gender = gender;
         this.department = department;
-        this. birth = birth;
+        this.birth = birth;
     }
 
     @Override

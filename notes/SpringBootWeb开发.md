@@ -846,3 +846,52 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 
 
 
+### 6、CRUD-员工添加
+
+```html
+<form>
+        <div class="form-group">
+          <label>lastName</label>
+          <input type="text" class="form-control" placeholder="黎塞留">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="text" class="form-control" placeholder="xxx@163.com">
+        </div>
+        <div class="form-group">
+          <label>Gender</label><br/>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="1">
+            <label class="form-check-label">男</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="0">
+            <label class="form-check-label">女</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="department">department</label>
+          <select class="form-control" id="department">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Birth</label>
+          <input type="text" class="form-control" placeholder="密苏里">
+        </div>
+        <button type="submit" class="btn btn-primary">添加</button>
+      </form>
+```
+
+注：提交的数据格式不对：生日：日期；
+
+2017-12-12；2017/12/12（默认）；2017.12.12；
+
+日期的格式化；SrpingMVC将页面提交的值需要转换为指定的类型；
+
+2017-12-12---Date；类型转换，格式化
+
