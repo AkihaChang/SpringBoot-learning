@@ -897,3 +897,94 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 
 ### 7、CRUD员工修改
 
+与添加共用页面
+
+```html
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+      <!-- 需要区分是修改还是添加 -->
+      <form th:action="@{/emp}" method="post">
+        <!-- 发送put请求修改员工数据 -->
+        <!--
+        1、SpringMVC中配置HiddenHttpMethodFilter；（Spring Boot自动配置好的）
+        2、页面创建一个post表单
+        3、创建一个input项，name="_method"；值就是我们指定的请求方式
+        -->
+        <input type="hidden" name="_method" value="put" th:if="${emp!=null}"/>
+        <!--<input type="hidden" name="_method" value="put" th:if="${emp!=null}" th:value="${emp.id}"/>-->
+        <div class="form-group">
+          <label>id</label>
+          <input type="text" name="id" class="form-control" placeholder="id" th:value="${emp!=null}?${emp.id}">
+        </div>
+        <div class="form-group">
+          <label>lastName</label>
+          <input type="text" name="lastName" class="form-control" placeholder="黎塞留" th:value="${emp!=null}?${emp.lastName}">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" class="form-control" placeholder="xxx@163.com" th:value="${emp!=null}?${emp.email}">
+        </div>
+        <div class="form-group">
+          <label>Gender</label><br/>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="1" th:checked="${emp!=null}?${emp.gender==1}">
+            <label class="form-check-label">男</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="0" th:checked="${emp!=null}?${emp.gender==0}">
+            <label class="form-check-label">女</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <!-- 提交的是部门id -->
+          <label>department</label>
+          <select class="form-control" name="department.id">
+            <option th:selected="${emp!=null}?${dept.id==emp.department.id}" th:each="dept:${depts}" th:value="${dept.id}" th:text="${dept.departmentName}"></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Birth</label>
+          <input type="text" name="birth" class="form-control" placeholder="密苏里" th:value="${emp!=null}?${#dates.format(emp.birth, 'yyyy-MM-dd')}">
+        </div>
+        <button type="submit" class="btn btn-primary" th:text="${emp!=null}?'修改':'添加'"></button>
+      </form>
+    </main>
+```
+
+### 8、员工删除
+
+```html
+<td>
+              <a class="btn btn-sm btn-primary" th:href="@{/emp/}+${emp.id}">编辑</a>
+              <button th:attr="del_uri=@{/emp/}+${emp.id}" class="btn btn-sm btn-danger deleteBtn">删除</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <form id="deleteEmpForm" method="post">
+      <input type="hidden" name="_method" value="delete"/>
+    </form>
+
+<!-- 利用js提交 -->
+<!-- 按钮点击事件 -->
+<script>
+  $(".deleteBtn").click(function () {
+      //删除当前员工
+      console.log($(this).attr("del_uri"));
+      $("#deleteEmpForm").attr("action",$(this).attr("del_uri")).submit();
+      return false;
+  })
+</script>
+```
+
+
+
+## 7、错误处理机制
+
+### 1、默认的错误处理机制
+
+默认效果：
+
+​	1、返回一个默认的错误页面	
+
