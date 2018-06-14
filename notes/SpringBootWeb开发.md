@@ -986,5 +986,71 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 
 默认效果：
 
-​	1、返回一个默认的错误页面	
+​	1、浏览器，返回一个默认的错误页面
+
+![error](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/error.png)
+
+​	2、如果其他客户端，默认响应一个json数据
+
+![error-mobile](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/error-mobile.png)
+
+原理：
+
+​	可以参照ErrorMvcAutoConfiguration；错误处理的自动配置；
+
+​	给容器中添加了以下组件：
+
+​	1、DefaultErrorAttributes：
+
+​	2、BaicErrorController：处理默认/error请求
+
+```java
+@Controller
+@RequestMapping("${server.error.path:${error.path:/error}}")
+public class BasicErrorController extends AbstractErrorController {
+    
+    @RequestMapping(produces = "text/html")  //产生html类型的数据
+	public ModelAndView errorHtml(HttpServletRequest request,
+			HttpServletResponse response) {
+		HttpStatus status = getStatus(request);
+		Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
+				request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
+		response.setStatus(status.value());
+		ModelAndView modelAndView = resolveErrorView(request, response, status, model);
+		return (modelAndView != null ? modelAndView : new ModelAndView("error", model));
+	}
+
+	@RequestMapping
+	@ResponseBody  //产生json数据
+	public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
+		Map<String, Object> body = getErrorAttributes(request,
+				isIncludeStackTrace(request, MediaType.ALL));
+		HttpStatus status = getStatus(request);
+		return new ResponseEntity<>(body, status);
+	}
+```
+
+​	3、ErrorPageCustomizer：
+
+```java
+	/**
+	 * Path of the error controller.
+	 */
+	@Value("${error.path:/error}")
+	private String path = "/error";  //系统出现错误以后，来到error请求，进行处理；(web.xml注册错误页面规则)；就会来到/error请求
+```
+
+​	4、DefaultErrorViewResolver：
+
+​	步骤：
+
+​		一旦系统出现4xx或者5xx之类的错误；	ErrorPageCustomizer就会生效（定制错误的响应规则）；就会来到/error请求；就会被BaicErrorController处理
+
+
+
+### 2、如何定制错误响应：
+
+​	1、如何定制错误的页面；
+
+​	2、如何定制错误的json数据；
 
