@@ -990,6 +990,10 @@ URI：/资源名称/资源标识    HTTP请求方式区分对资源CRUD操作
 
 ![error](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/error.png)
 
+浏览器发送请求的请求头：
+
+![rowser-header](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/browser-header.png)
+
 ​	2、如果其他客户端，默认响应一个json数据
 
 ![error-mobile](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/error-mobile.png)
