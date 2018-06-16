@@ -522,7 +522,7 @@ public class WebMvcAutoConfiguration {
 
 ​	2、在Spring Boot中，会有非常多的xxxConfigurer帮助我们进行扩展配置
 
-
+​	3、在Spring Boot中会有很多xxxCustomizer帮助我们进行定制配置
 
 ## 6、RestfulCRUD
 
@@ -1212,4 +1212,165 @@ public class MyErrorAttributes extends DefaultErrorAttributes {
 ## 8、配置嵌入式Servlet容器
 
 Spring Boot默认是用的是嵌入式的Servlet容器（Tomcat）；
+
+![](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/SpringBoot-tomcat.png)
+
+问题？
+
+### 1、如何定制和修改Servlet容器的相关配置；
+
+​	1、修改和server有关的配置（ServerProperties）：
+
+```properties
+server.port=8081
+server.context-path=/crud 注：Spring Boot 2.0不再支持
+server.tomcat.uri-encoding=UTF-8
+
+# 通用的Servlet容器设置
+server.xxx
+# Tomcat的设置
+server.tomcat.xxx
+```
+
+​	2、编写一个EmbeddedServletContainerCustomizer：嵌入式的Servlet容器的定制器，来修改Servlet容器的配置（注：Spring Boot 2.0 已失效）
+
+```java
+    @Bean
+    public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer {
+        return new EmbeddedServletContainerCustomizer() {
+
+            //定制嵌入式的Servlet容器相关的规则
+            @Override
+            public void customizer(ConfigurableEmbeddedServletContainer container) {
+                container.setport(8083);
+            }
+        }
+    }
+```
+
+### 2、注册Servlet三大组件（Servlet、Filter、Listener）
+
+由于Spring Boot默认是以jar包的方式启动嵌入式的Servlet容器来启动Spring Boot的web应用，没有web.xml文件。
+
+注册三大组件用一下方式：
+
+**ServletRegistrationBean**
+
+```java
+public ServletRegistrationBean myServlet() {
+    ServletRegistrationBean registrationBean = new ServletRegistrationBean(new MyServlet(),"/myServlet");
+    return registrationBean;
+}
+```
+
+**FilterRegistrationBean**
+
+```java
+@Bean
+public FilterRegistrationBean myFilter() {
+    FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+    registrationBean.setFilter(new MyFilter());
+    registrationBean.setUrlPatterns(Arrays.asList("/hello","/myServlet"));
+    return registrationBean;
+}
+```
+
+**ServletListenerRegistrationBean**
+
+```java
+@Bean
+ServletListenerRegistrationBean myListener() {
+    ServletListenerRegistrationBean<MyListener> registrationBean = new ServletListenerRegistrationBean<>(new MyListener());
+    return registrationBean;
+}
+```
+
+Spring Boot帮我们自动配置SpringMVC的时候，自动的注册了SpringMVC的前端控制器；DispatcherServlet：
+
+```java
+@Bean(name = DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME)
+@ConditionalOnBean(value = DispatcherServlet.class, name = DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
+public ServletRegistrationBean<DispatcherServlet> dispatcherServletRegistration(
+      DispatcherServlet dispatcherServlet) {
+   ServletRegistrationBean<DispatcherServlet> registration = new ServletRegistrationBean<>(
+         dispatcherServlet,
+         this.serverProperties.getServlet().getServletMapping());
+    //默认拦截：/所有请求；包括静态资源，但是不拦截jsp请求；  /* 会拦截jsp
+    //可以通过server.servletPath来修改SpringMVC前端控制器默认拦截的请求路径
+   registration.setName(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME);
+   registration.setLoadOnStartup(
+         this.webMvcProperties.getServlet().getLoadOnStartup());
+   if (this.multipartConfig != null) {
+      registration.setMultipartConfig(this.multipartConfig);
+   }
+   return registration;
+}
+```
+
+2、Spring Boot能不能支持其他的Servlet容器；
+
+### 3、替换我其他嵌入式Servlet容器
+
+默认支持：
+
+Tomcat（默认使用）
+
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+```
+
+Jetty
+
+```xml
+        <!-- 引入web模块 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- 引入其他的servlet容器 -->
+        <dependency>
+            <groupId>spring-boot-starter-jetty</groupId>
+            <artifactId>org.springframework.boot</artifactId>
+        </dependency>
+```
+
+
+
+Undertow
+
+```xml
+        <!-- 引入web模块 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- 引入其他的servlet容器 -->
+        <dependency>
+            <groupId>spring-boot-starter-undertow</groupId>
+            <artifactId>org.springframework.boot</artifactId>
+        </dependency>
+```
+
+
+
+
+
+
 
