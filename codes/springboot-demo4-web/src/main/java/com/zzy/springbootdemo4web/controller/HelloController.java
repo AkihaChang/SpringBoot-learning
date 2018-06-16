@@ -1,7 +1,9 @@
 package com.zzy.springbootdemo4web.controller;
 
+import com.zzy.springbootdemo4web.exception.UserNotExistException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.lang.reflect.Array;
@@ -19,7 +21,10 @@ public class HelloController {
 
     @ResponseBody
     @RequestMapping("/hello")
-    private String hello(){
+    private String hello(@RequestParam("user") String user){
+        if(user.equals("aaa")) {
+            throw new UserNotExistException();
+        }
         return "hello world!";
     }
 
