@@ -1560,7 +1560,7 @@ servlet3.0（Spring注解版）：
 
 
 
-流程：
+#### 流程
 
 1、启动Tomcat
 
@@ -1568,9 +1568,95 @@ servlet3.0（Spring注解版）：
 
 Spring的web模块里面有这个文件：**org.springframework.web.SpringServletContainerInitializer**
 
-3、SpringServletContainerInitializer将@HandleTypes(WebApplicationInitializer)标注的所有这个类型的类都传入到onStartup方法的Set<Class<?>>；为这些WebApplicationInitialzer类型的类创建实例
+3、SpringServletContainerInitializer将@HandleTypes(WebApplicationInitializer)标注的所有这个类型的类都传入到onStartup方法的Set<Class<?>>；为这些WebApplicationInitialzer类型的类创建实例；
 
+4、每一个WebApplicationInitializer都调用自己的onStartup；
 
+![WebApplicationInitializer-Hierachy](https://github.com/AkihaChang/SpringBoot-learning/raw/master/notes/images/WebApplicationInitializer-Hierachy.png)
+
+5、相当于我们的SpringBootServletInitializer的类会被创建对象，并执行onStartup方法
+
+6、SpringBootServletInitializer实例执行onStartup的时候会createRootApplicationContext；创建容器
+
+```java
+	protected WebApplicationContext createRootApplicationContext(
+			ServletContext servletContext) {
+        //创建SpringApplicationBuilder
+		SpringApplicationBuilder builder = createSpringApplicationBuilder();
+		StandardServletEnvironment environment = new StandardServletEnvironment();
+		environment.initPropertySources(servletContext, null);
+		builder.environment(environment);
+		builder.main(getClass());
+		ApplicationContext parent = getExistingRootWebApplicationContext(servletContext);
+		if (parent != null) {
+			this.logger.info("Root context already created (using as parent).");
+			servletContext.setAttribute(
+					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, null);
+			builder.initializers(new ParentContextApplicationContextInitializer(parent));
+		}
+		builder.initializers(
+				new ServletContextApplicationContextInitializer(servletContext));
+		builder.contextClass(AnnotationConfigEmbeddedWebApplicationContext.class);
+        //调用configure方法，子类重写了这个方法，将Spring Boot的主程序类传入了进来
+		builder = configure(builder);
+        //使用builder创建一个Spring应用
+		SpringApplication application = builder.build();
+		if (application.getSources().isEmpty() && AnnotationUtils
+				.findAnnotation(getClass(), Configuration.class) != null) {
+			application.getSources().add(getClass());
+		}
+		Assert.state(!application.getSources().isEmpty(),
+				"No SpringApplication sources have been defined. Either override the "
+						+ "configure method or add an @Configuration annotation");
+		// Ensure error pages are registered
+		if (this.registerErrorPageFilter) {
+			application.getSources().add(ErrorPageFilterConfiguration.class);
+		}
+        //启动Spring应用
+		return run(application);
+	}
+```
+
+7、Spring的应用就启动并且创建了IOC容器
+
+```java
+	public ConfigurableApplicationContext run(String... args) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		ConfigurableApplicationContext context = null;
+		FailureAnalyzers analyzers = null;
+		configureHeadlessProperty();
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+		listeners.starting();
+		try {
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(
+					args);
+			ConfigurableEnvironment environment = prepareEnvironment(listeners,
+					applicationArguments);
+			Banner printedBanner = printBanner(environment);
+			context = createApplicationContext();
+			analyzers = new FailureAnalyzers(context);
+			prepareContext(context, environment, listeners, applicationArguments,
+					printedBanner);
+            //刷新IOC容器
+			refreshContext(context);
+			afterRefresh(context, applicationArguments);
+			listeners.finished(context, null);
+			stopWatch.stop();
+			if (this.logStartupInfo) {
+				new StartupInfoLogger(this.mainApplicationClass)
+						.logStarted(getApplicationLog(), stopWatch);
+			}
+			return context;
+		}
+		catch (Throwable ex) {
+			handleRunFailure(context, listeners, analyzers, ex);
+			throw new IllegalStateException(ex);
+		}
+	}
+```
+
+启动Servlet容器，再启动Spring Boot应用
 
 
 
