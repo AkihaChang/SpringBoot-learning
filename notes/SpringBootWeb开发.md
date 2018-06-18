@@ -1319,6 +1319,7 @@ Tomcat（默认使用）
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 引入web模块默认就是使用嵌入式的Tomcat作为Servlet容器 -->
         </dependency>
 ```
 
@@ -1368,7 +1369,206 @@ Undertow
         </dependency>
 ```
 
+### 4、嵌入式Servlet容器自动配置原理（Spring Boot 2.0）
 
+EmbeddedWebServerFactoryCustomizerAutoConfiguration：嵌入式的Servlet容器自动配置？
+
+```java
+@Configuration
+@EnableConfigurationProperties(ServerProperties.class)
+public class EmbeddedWebServerFactoryCustomizerAutoConfiguration {
+    
+    @ConditionalOnClass({ Tomcat.class, UpgradeProtocol.class })  //当前是否引入了Tomcat依赖；
+	public static class TomcatWebServerFactoryCustomizerConfiguration {
+
+		@Bean
+		public TomcatWebServerFactoryCustomizer tomcatWebServerFactoryCustomizer(
+				Environment environment, ServerProperties serverProperties) {
+			return new TomcatWebServerFactoryCustomizer(environment, serverProperties);
+		}
+
+	}
+    
+    /**
+	 * Nested configuration if Jetty is being used.
+	 */
+	@Configuration
+	@ConditionalOnClass({ Server.class, Loader.class, WebAppContext.class })
+	public static class JettyWebServerFactoryCustomizerConfiguration {
+
+		@Bean
+		public JettyWebServerFactoryCustomizer jettyWebServerFactoryCustomizer(
+				Environment environment, ServerProperties serverProperties) {
+			return new JettyWebServerFactoryCustomizer(environment, serverProperties);
+		}
+
+	}
+
+	/**
+	 * Nested configuration if Undertow is being used.
+	 */
+	@Configuration
+	@ConditionalOnClass({ Undertow.class, SslClientAuthMode.class })
+	public static class UndertowWebServerFactoryCustomizerConfiguration {
+
+		@Bean
+		public UndertowWebServerFactoryCustomizer undertowWebServerFactoryCustomizer(
+				Environment environment, ServerProperties serverProperties) {
+			return new UndertowWebServerFactoryCustomizer(environment, serverProperties);
+		}
+
+	}
+}
+```
+
+### 5、嵌入式Servlet容器启动原理（此为 Spring Boot  1.5版本，后续会做相应更新为2.0）
+
+什么时候创建嵌入式的Servlet容器工厂？什么时候获取嵌入式的Servlet容器并启动Tomcat；
+
+获取嵌入式的Servlet容器工厂：
+
+1、Spring Boot应用启动运行run方法
+
+2、refreshContext(context)；Spring Boot刷新IOC容器（穿件IOC容器对象，并初始化容器，创建容器中的每个组件）；如果是web应用则创建：**AnnotationConfigServletWebServerApplicationContext**，否则：**AnnotationConfigApplicationContext**
+
+3、refresh(context)；刷新刚才创建好的IOC容器
+
+```java
+	@Override
+	public void refresh() throws BeansException, IllegalStateException {
+		synchronized (this.startupShutdownMonitor) {
+			// Prepare this context for refreshing.
+			prepareRefresh();
+
+			// Tell the subclass to refresh the internal bean factory.
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+			// Prepare the bean factory for use in this context.
+			prepareBeanFactory(beanFactory);
+
+			try {
+				// Allows post-processing of the bean factory in context subclasses.
+				postProcessBeanFactory(beanFactory);
+
+				// Invoke factory processors registered as beans in the context.
+				invokeBeanFactoryPostProcessors(beanFactory);
+
+				// Register bean processors that intercept bean creation.
+				registerBeanPostProcessors(beanFactory);
+
+				// Initialize message source for this context.
+				initMessageSource();
+
+				// Initialize event multicaster for this context.
+				initApplicationEventMulticaster();
+
+				// Initialize other special beans in specific context subclasses.
+				onRefresh();
+
+				// Check for listener beans and register them.
+				registerListeners();
+
+				// Instantiate all remaining (non-lazy-init) singletons.
+				finishBeanFactoryInitialization(beanFactory);
+
+				// Last step: publish corresponding event.
+				finishRefresh();
+			}
+```
+
+4、onRefresh()；web的IOC容器重写了onRefresh方法
+
+5、web IOC容器会创建嵌入式的Servlet容器：**createEmbeddedServletContainer()**;
+
+**6、获取嵌入式的Servlet容器工厂：**
+
+EmbeddedServletContainerFactory containerFactory = getEmbeddedServletContainerFactory()；
+
+​	从IOC容器中获取EmbeddedServletContainerFactory组件；
+
+​	**TomcatEmbeddedServletContainerFactory**创建对象，后置处理器一个是这个对象，就获取所有的定制器来先定制Servlet容器的相关配置；
+
+7、**使用容器工厂获取嵌入式的Servlet容器**：this.embeddedServletContainer = containerFactory.getEmbeddedServletContainer(getSelfInitializer())；
+
+8、嵌入式的Servlet容器创建对象并启动Servlet容器；
+
+**先启动嵌入式的Servlet容器，再将IOC容器中剩下没有创建出的对象获取出来；**
+
+**IOC容器启动创建嵌入式的Servlet容器**
+
+
+
+## 9、使用外置的Servlet容器
+
+嵌入式Servlet容器：应用打成可执行的jar
+
+​	有点：简单、便携；
+
+​	缺点：默认不支持JSP、优化、定制比较复杂（使用定制器【Server Properties】，自己编写嵌入式Servlet容器的创建工程）；
+
+
+
+外置的Servlet容器：外面安装Tomcat---应用war包的方式打包；
+
+#### 步骤
+
+1、必须创建一个war项目；
+
+2、将嵌入式的Tomcat指定为provided；
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-tomcat</artifactId>
+    <scope>provided</scope>
+</dependency>
+```
+
+3、必须编写一个SpringBootServletInitializer的子类，并调用configure方法
+
+```java
+public class ServletInitializer extends SpringBootServletInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        //传入Spring Boot应用的主程序
+        return application.sources(Springboot04WebJspApplication.class);
+    }
+
+}
+```
+
+4、启动服务器就可以使用
+
+#### 原理
+
+jar包：执行Spring Boot追的main方法，启动IOC容器，穿件嵌入式的Servlet容器；
+
+war包：启动服务器，**服务器启动Spring Boot应用**【SpringBootServletInitializer】，启动IOC容器;
+
+
+
+servlet3.0（Spring注解版）：
+
+8.2.4 Sared libraries / runtime pluggability：
+
+​	1、服务器启动（web应用启动）会创建当前web应用里面每一个jar包里面ServletContainerInitializer实例：
+
+​	2、ServletContainerInitializer的实现放在jar包的METAL-INF/services文件夹下，有一个名为javax.servlet.ServletContainerInitializer的文件，内容就是ServletContainerInitializer的实现类全名
+
+​	3、可以使用@HandleTypes，在应用启动的时候加载我们感兴趣的类；
+
+
+
+流程：
+
+1、启动Tomcat
+
+2、org\apache\tomcat\embed\tomcat-embed-core\8.5.31\tomcat-embed-core-8.5.31.jar!\javax\servlet\ServletContainerInitializer：
+
+Spring的web模块里面有这个文件：**org.springframework.web.SpringServletContainerInitializer**
+
+3、SpringServletContainerInitializer将@HandleTypes(WebApplicationInitializer)标注的所有这个类型的类都传入到onStartup方法的Set<Class<?>>；为这些WebApplicationInitialzer类型的类创建实例
 
 
 
